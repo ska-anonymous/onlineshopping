@@ -1,7 +1,10 @@
-import './globals.css'
+'use client';
 import { Inter } from 'next/font/google'
-
+import '../public/bootstrap/css/bootstrap.min.css';
 const inter = Inter({ subsets: ['latin'] })
+import { useEffect, useState } from 'react';
+import { AppContext } from './appcontextprovider';
+import { checkLogin } from '@/components/functions';
 
 export const metadata = {
   title: 'Create Next App',
@@ -9,9 +12,29 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
+
+  const [isLogin, setIslogin] = useState(false);
+  const [user, setUser] = useState(null);
+  const [cart, setCart] = useState([]);
+
+  useEffect(() => {
+    checkLogin().then(data => {
+      setIslogin(data.login);
+      setUser(data.user);
+    });
+  }, [])
+
+
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <AppContext.Provider value={{ isLogin, setIslogin, user, setUser, cart, setCart }}>
+          {children}
+        </AppContext.Provider>
+        <script src='bootstrap/js/bootstrap.min.js'></script>
+        <script src='bootstrap/js/bootstrap.bundle.min.js'></script>
+      </body>
     </html>
   )
 }
